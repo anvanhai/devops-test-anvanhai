@@ -1,1 +1,1 @@
-console.log("build ok")
+console.log("build ok"
