@@ -7,7 +7,10 @@ def notify(String msg) {
 pipeline {
   agent any
   tools { nodejs 'node20' }
-  triggers { pollSCM('* * * * *') }
+  triggers {
+    githubPush()
+    pollSCM('* * * * *')
+  }
   environment {
     TG_TOKEN          = credentials('telegram-token-anvanhai')
     TG_CHAT           = credentials('telegram-chat-id-anvanhai')
