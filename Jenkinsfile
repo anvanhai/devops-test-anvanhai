@@ -34,15 +34,17 @@ pipeline {
         sh 'if [ -f package.json ] && grep -q "\\"build\\"" package.json; then npm run build; else echo "No build script, skip"; fi'
       }
     }
-    stage('Deploy') {
+        stage('Deploy') {
       steps {
         script {
-          def out = sh(script: 'npx vercel deploy --prod --yes --token=$VERCEL_TOKEN', returnStdout: true).trim()
+          retry(3) {
+            sh 'npm install -g vercel --fetch-retries=5 --fetch-retry-mintimeout=20000'
+          }
+          def out = sh(script: 'vercel deploy --prod --yes --token=$VERCEL_TOKEN', returnStdout: true).trim()
           env.SITE_URL = out.readLines().last()
         }
       }
     }
-  }
   post {
     success {
       script { notify("✅ DEPLOY SUCCESS\nProject: devops-test\nBranch: main\nURL: ${env.SITE_URL}") }
