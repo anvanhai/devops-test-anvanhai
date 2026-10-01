@@ -8,7 +8,7 @@ pipeline {
   agent any
   tools { nodejs 'node20' }
   triggers { pollSCM('* * * * *') }
-    environment {
+  environment {
     TG_TOKEN          = credentials('telegram-token-anvanhai')
     TG_CHAT           = credentials('telegram-chat-id-anvanhai')
     VERCEL_TOKEN      = credentials('vercel-token-anvanhai')
@@ -34,17 +34,18 @@ pipeline {
         sh 'if [ -f package.json ] && grep -q "\\"build\\"" package.json; then npm run build; else echo "No build script, skip"; fi'
       }
     }
-        stage('Deploy') {
+    stage('Deploy') {
       steps {
         script {
           retry(3) {
             sh 'npm install -g vercel --fetch-retries=5 --fetch-retry-mintimeout=20000'
           }
-          def out = sh(script: 'vercel deploy --prod --yes --token=$VERCEL_TOKEN', returnStdout: true).trim()
+          def out = sh(script: 'npx vercel deploy --prod --yes --token=$VERCEL_TOKEN', returnStdout: true).trim()
           env.SITE_URL = out.readLines().last()
         }
       }
     }
+  }
   post {
     success {
       script { notify("✅ DEPLOY SUCCESS\nProject: devops-test\nBranch: main\nURL: ${env.SITE_URL}") }
