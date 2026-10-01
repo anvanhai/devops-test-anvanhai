@@ -11,22 +11,28 @@ pipeline {
   environment {
     TG_TOKEN          = credentials('telegram-token')
     TG_CHAT           = credentials('telegram-chat-id')
-    VERCEL_TOKEN      = credentials('vercel-token')
-    VERCEL_ORG_ID     = credentials('vercel-org-id')
-    VERCEL_PROJECT_ID = credentials('vercel-project-id')
+    VERCEL_TOKEN      = credentials('vercel-token-test')
+    VERCEL_ORG_ID     = credentials('vercel-org-id-test')
+    VERCEL_PROJECT_ID = credentials('vercel-project-id-test')
   }
   stages {
     stage('Notify Start') {
-      steps { script { notify("🚀 DEPLOY STARTED\nProject: devops-test\nBranch: main") } }
+      steps {
+        script { notify("🚀 DEPLOY STARTED\nProject: devops-test\nBranch: main") }
+      }
     }
     stage('Checkout') {
       steps { checkout scm }
     }
     stage('Install') {
-      steps { sh 'npm install' }
+      steps {
+        sh 'if [ -f package.json ]; then npm install; else echo "Static site, no dependencies"; fi'
+      }
     }
     stage('Build') {
-      steps { sh 'npm run build' }
+      steps {
+        sh 'if [ -f package.json ] && grep -q "\\"build\\"" package.json; then npm run build; else echo "No build script, skip"; fi'
+      }
     }
     stage('Deploy') {
       steps {
