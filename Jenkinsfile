@@ -8,12 +8,12 @@ pipeline {
   agent any
   tools { nodejs 'node20' }
   triggers { pollSCM('* * * * *') }
-  environment {
-    TG_TOKEN          = credentials('telegram-token')
-    TG_CHAT           = credentials('telegram-chat-id')
-    VERCEL_TOKEN      = credentials('vercel-token-test')
-    VERCEL_ORG_ID     = credentials('vercel-org-id-test')
-    VERCEL_PROJECT_ID = credentials('vercel-project-id-test')
+    environment {
+    TG_TOKEN          = credentials('telegram-token-anvanhai')
+    TG_CHAT           = credentials('telegram-chat-id-anvanhai')
+    VERCEL_TOKEN      = credentials('vercel-token-anvanhai')
+    VERCEL_ORG_ID     = credentials('vercel-org-id-anvanhai')
+    VERCEL_PROJECT_ID = credentials('vercel-project-id-anvanhai')
   }
   stages {
     stage('Notify Start') {
